@@ -48,6 +48,13 @@ void AlertHandler::startAlertRoutine(void)
 
 void AlertHandler::finishedCall(const Modem::State state)
 {
+    if (state == Modem::Close)
+    {
+        io << "AlertHandler: Modem closed. Try to reconfigure modem.\n";
+        m_modem->reconfigure();
+        this->startAlertRoutine();
+    }
+
     if (state == Modem::CallRejected)
     {
         io << "AlertHandler: call rejeceted from " << *m_calling << "\n";

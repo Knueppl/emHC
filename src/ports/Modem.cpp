@@ -78,16 +78,19 @@ void Modem::configureDevice(const QByteArray& device)
     cfsetispeed(&options, B115200);
     cfsetospeed(&options, B115200);
 
-    options.c_cflag &= ~PARENB;
-    options.c_cflag &= ~CSTOPB;
-    options.c_cflag &= ~CSIZE;
+//    options.c_cflag &= ~PARENB;
+//    options.c_cflag &= ~CSTOPB;
+//    options.c_cflag &= ~CSIZE;
+    options.c_cflag = 0;
     options.c_cflag |= (CREAD | CLOCAL);
     options.c_cflag |= CS8;
     options.c_cflag |= CRTSCTS;
 
+    options.c_oflag = 0;
     options.c_oflag |= OPOST;
     options.c_oflag |= ONLCR;
 
+    options.c_iflag = 0;
     options.c_iflag |= (IGNPAR | ICRNL);
 
     tcsetattr(m_device, TCSANOW, &options);
@@ -95,6 +98,7 @@ void Modem::configureDevice(const QByteArray& device)
     m_deviceName = device;
     m_state = Open;
 
+    io << "Modem: device \"" << device << "\" configured.\n";
     this->connect(&m_timer, SIGNAL(timeout()), this, SLOT(readFromDevice()));
 }
 
@@ -125,7 +129,7 @@ void Modem::closeDevice(void)
 {
     m_timer.stop();
     this->disconnect(&m_timer, SIGNAL(timeout()), this, SLOT(readFromDevice()));
-    io << "Modem: close device \"" << m_deviceName << "\".";
+    io << "Modem: close device \"" << m_deviceName << "\".\n";
     ::close(m_device);
     m_device = 0;
     m_buffer.clear();
@@ -202,5 +206,6 @@ void Modem::readFromDevice(void)
     {
         io << "Modem: timeout by calling\n";
         this->closeDevice();
+        emit this->stopped(m_state);
     }
 }

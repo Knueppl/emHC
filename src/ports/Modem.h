@@ -74,6 +74,12 @@ public:
      */
     bool call(const QByteArray& phoneNumber, const unsigned int timeout = 0);
 
+    //! reconfigure m_device
+    /*!
+     * you can reconfigure the modem device for example when it crashed.
+     */
+    void reconfigure(void) { this->configureDevice(m_deviceName); }
+
 signals:
     //! signal stopped
     /*!

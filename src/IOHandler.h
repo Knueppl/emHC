@@ -1,15 +1,25 @@
 #ifndef __IO_HANDLER__
 #define __IO_HANDLER__
 
+#include "MsgPipe.h"
+
 #include <QThread>
 #include <QMutex>
+#include <QFile>
+
+class QByteArray;
+class QString;
+class QStringRef;
 
 class IOHandler : public QThread
 {
-public:
-    IOHandler(QObject* parent = 0);
+    Q_OBJECT
 
-    /* Fühgt string zum Logspeicher hinzu */
+public:
+    IOHandler(const QByteArray& logPath, QObject* parent = 0);
+    ~IOHandler(void);
+
+    //! write string to log file
     IOHandler& operator<<(const QString& string);
     IOHandler& operator<<(const QStringRef& string);
     IOHandler& operator<<(const QByteArray& string);
@@ -20,9 +30,13 @@ public:
 
     void run(void);
 
+signals:
+    void messageReceived(const QByteArray& msg);
+
 private:
-    QString m_log;
+    QFile m_log;
     QMutex m_mutex;
+    MsgPipe m_pipe;
 };
 
 extern IOHandler io;

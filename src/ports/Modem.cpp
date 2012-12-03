@@ -78,9 +78,6 @@ void Modem::configureDevice(const QByteArray& device)
     cfsetispeed(&options, B115200);
     cfsetospeed(&options, B115200);
 
-//    options.c_cflag &= ~PARENB;
-//    options.c_cflag &= ~CSTOPB;
-//    options.c_cflag &= ~CSIZE;
     options.c_cflag = 0;
     options.c_cflag |= (CREAD | CLOCAL);
     options.c_cflag |= CS8;
@@ -92,6 +89,8 @@ void Modem::configureDevice(const QByteArray& device)
 
     options.c_iflag = 0;
     options.c_iflag |= (IGNPAR | ICRNL);
+
+    options.c_lflag = 0;
 
     tcsetattr(m_device, TCSANOW, &options);
 
@@ -148,7 +147,7 @@ void Modem::readFromDevice(void)
 {
     if (m_state == Close)
     {
-        qDebug() << "device closed";
+        qDebug() << __PRETTY_FUNCTION__ << "device closed";
         return;
     }
 
@@ -161,10 +160,7 @@ void Modem::readFromDevice(void)
         m_buffer.clear();
 
         if (static_cast<unsigned int>(m_timestamp.elapsed()) >= m_timeout)
-        {
-            qDebug() << "timeout";
             ::write(m_device, "\n", 1);
-        }
 
         return;
     }

@@ -17,18 +17,17 @@ PortFactory::PortFactory(const QByteArray& multiplexerPath, const QByteArray& po
 
 PortFactory::~PortFactory(void)
 {
-//    Port::stopTimer();
+
 }
 
 Port* PortFactory::build(const QDomNode& node)
 {
-    qDebug() << __PRETTY_FUNCTION__;
     /* Check if node is from type Element and the tagname is "port" */
     QDomElement elm = node.toElement();
 
     if (elm.isNull() || elm.tagName() != "port")
     {
-        io << __PRETTY_FUNCTION__ << " Falscher Tag.\n";
+        io << "PortFactory: Falscher Tag.\n";
         return 0;
     }
 

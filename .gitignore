@@ -1,0 +1,4 @@
+build/*.o
+build/moc_*.cpp
+build/lib*.so*
+build/Makefile

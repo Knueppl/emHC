@@ -1,15 +1,19 @@
 #include "MsgPipe.h"
+#include "IOHandler.h"
 
 #include <QByteArray>
+#include <QFile>
+
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
 
 unsigned int MsgPipe::s_defaultBufSize = 4096;
+QTimer MsgPipe::s_timer;
 
-#define MSG(x) (io << "MsgPipe (" << this << "): "(x)".\n")
+#define MSG(x) (io << "MsgPipe (" << this << "): " << x << ".\n")
 
-MsgPipe::MsgPipe(const QByteArray& keyFile, const Type type)
+MsgPipe::MsgPipe(const QByteArray& keyFile, const Type type, const unsigned int bufSize)
     : m_msgID(-1),
       m_type(None),
       m_data(0),
@@ -26,6 +30,12 @@ MsgPipe::MsgPipe(const QByteArray& keyFile, const Type type)
     if ((m_msgID = ::msgget(ftok(keyFile.data(), type), (IPC_CREAT | IPC_EXCL | 0666))) < 0)
     {
         io << "MsgPipe (" << this << "): generate message queue fails.\n";
+        return;
+    }
+
+    if (!this->allocBuffer(type, bufSize))
+    {
+        m_msgID = -1;
         return;
     }
 }
@@ -58,14 +68,24 @@ bool MsgPipe::allocBuffer(const Type type, const unsigned int size)
     }
 
     m_type = type;
-    m_size = size;
+    m_bufSize = size;
     return true;
 }
 
-void MsgBuffer::freeBuffer(void)
+void MsgPipe::freeBuffer(void)
 {
     this->disconnect(&s_timer, SIGNAL(timeout()), this, SLOT(checkQueue()));
-    delete [] m_data;
+
+    switch (m_type)
+    {
+    case Text:
+        delete [] static_cast<char*>(m_data);
+        break;
+
+    default:
+        break;
+    }
+
     m_bufSize = 0;
     m_data    = 0;
     m_memSize = 0;
@@ -81,11 +101,19 @@ bool MsgPipe::send(const QByteArray& msg)
 
     /* bad thing but i must copy the data */
     const unsigned int size = msg.size() + 1 + sizeof(long);
-    char* buffer = new char[size] ? : { MSG("can't alloc send buffer"); return false; }
+    char* buffer = new char[size];
 
-    *static_cast<long*>(buffer) = Text;
+    if (!buffer)
+    {
+        MSG("can't alloc send buffer");
+        return false;
+    }
 
-    for (char* des = buffer + sizeof(long), src = msg.data(); des < buffer + size; des++, src++)
+    *reinterpret_cast<long*>(buffer) = Text;
+    const char* src;
+    char* des;
+
+    for (des = buffer + sizeof(long), src = msg.data(); des < buffer + size; des++, src++)
         *des = *src;
 
     if (::msgsnd(m_msgID, buffer, size, IPC_NOWAIT) < 0)

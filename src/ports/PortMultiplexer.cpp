@@ -29,13 +29,13 @@ PortMultiplexer::PortMultiplexer(const QByteArray& pinName, const int flags)
 {
     if (m_mode == None)
     {
-        io << "Multiplexer " << m_name << ": Keinen gültigen Mode gefunden.\n";
+        io() << "Multiplexer " << m_name << ": Keinen gültigen Mode gefunden.";
         return;
     }
 
     if (!m_file.open(QIODevice::WriteOnly))
     {
-        io << "Multiplexer " << m_name << ": kann Datei" << m_file.fileName() << "nicht öffnen.\n";
+        io() << "Multiplexer " << m_name << ": kann Datei" << m_file.fileName() << "nicht öffnen.";
         return;
     }
 
@@ -61,7 +61,7 @@ void PortMultiplexer::setFlags(const int flags)
     /* write flags + mode to multiplexer file */
     if (!m_file.isOpen() || m_file.write(QByteArray::number(m_flags | m_mode, 16)) < 0)
     {
-        io << "Multiplexer " << m_name << ": Kann \"flags\" nicht setzen. Datei" << m_file.fileName() << "ist nicht geöffnet.\n";
+        io() << "Multiplexer " << m_name << ": Kann \"flags\" nicht setzen. Datei" << m_file.fileName() << "ist nicht geöffnet.";
         return;
     }
 
@@ -76,7 +76,7 @@ PortMultiplexer::Mode PortMultiplexer::getModeOfPort(const QByteArray& pinName)
 
     if(!process.waitForFinished(10000) || process.exitCode())
     {
-        io << __PRETTY_FUNCTION__ << " Fehler beim ausführen von grep.\n";
+        io() << __PRETTY_FUNCTION__ << " Fehler beim ausführen von grep.";
         return None;
     }
 
@@ -86,7 +86,7 @@ PortMultiplexer::Mode PortMultiplexer::getModeOfPort(const QByteArray& pinName)
 
     if (position < 0 || position > 7)
     {
-        io << __PRETTY_FUNCTION__ << " Keine Multiplexerstelle gefunden.\n";
+        io() << __PRETTY_FUNCTION__ << " Keine Multiplexerstelle gefunden.";
         return None;
     }
 
@@ -118,7 +118,7 @@ QByteArray PortMultiplexer::getMultiplexerName(const QByteArray& pinName)
 
     if(!process.waitForFinished(10000) || process.exitCode())
     {
-        io << __PRETTY_FUNCTION__ << " Fehler beim ausführen von grep.\n";
+        io() << __PRETTY_FUNCTION__ << " Fehler beim ausführen von grep.";
         return QByteArray();
     }
 

@@ -27,7 +27,7 @@ Port* PortFactory::build(const QDomNode& node)
 
     if (elm.isNull() || elm.tagName() != "port")
     {
-        io << "PortFactory: Falscher Tag.\n";
+        io() << "PortFactory: Falscher Tag.";
         return 0;
     }
 

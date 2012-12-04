@@ -3,40 +3,46 @@
 
 #include "MsgPipe.h"
 
-#include <QThread>
-#include <QMutex>
+#include <QObject>
 #include <QFile>
+#include <QTextStream>
+#include <QByteArray>
+#include <QStringRef>
+#include <QTime>
 
-class QByteArray;
 class QString;
-class QStringRef;
 
-class IOHandler : public QThread
+class IOHandler : public QObject
 {
     Q_OBJECT
 
 public:
-    IOHandler(const QByteArray& logPath, QObject* parent = 0);
+    IOHandler(const QByteArray& logFile = QByteArray(), QObject* parent = 0);
     ~IOHandler(void);
 
-    //! write string to log file
-    IOHandler& operator<<(const QString& string);
-    IOHandler& operator<<(const QStringRef& string);
-    IOHandler& operator<<(const QByteArray& string);
-    IOHandler& operator<<(const char* string);
-    IOHandler& operator<<(const unsigned int number);
-    IOHandler& operator<<(const int number);
-    IOHandler& operator<<(const float number);
+    IOHandler& operator()(void)
+    {
+        m_out << "\n[" << QTime::currentTime().toString() << "]";
+        return *this;
+    }
 
-    void run(void);
+    //! write string to log file
+    IOHandler& operator<<(const QString& string) { m_out << string; return *this; }
+    IOHandler& operator<<(const QStringRef& string) { m_out << string.string(); return *this; }
+    IOHandler& operator<<(const QByteArray& string) { m_out << string; return *this; }
+    IOHandler& operator<<(const char* string) { m_out << string; return *this; }
+    IOHandler& operator<<(const unsigned int number) { m_out << number; return *this; }
+    IOHandler& operator<<(const int number) { m_out << number; return *this; }
+    IOHandler& operator<<(const float number) { m_out << number; return *this; }
+    IOHandler& operator<<(const void* ptr) { m_out << ptr; return *this; }
 
 signals:
     void messageReceived(const QByteArray& msg);
 
 private:
     QFile m_log;
-    QMutex m_mutex;
-    MsgPipe m_pipe;
+    QTextStream m_out;
+//    MsgPipe m_pipe;
 };
 
 extern IOHandler io;

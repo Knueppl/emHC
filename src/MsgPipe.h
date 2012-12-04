@@ -2,6 +2,7 @@
 #define __MSG_PIPE__
 
 #include <QObject>
+#include <QTimer>
 
 class QByteArray;
 
@@ -25,18 +26,21 @@ public:
     QByteArray text(void) const;
 
     unsigned int bufferSize(void) const { return m_bufSize; }
-    static unsigned int defaultBufferSize(void) const { return s_defaultBufSize; }
+    static unsigned int defaultBufferSize(void) { return s_defaultBufSize; }
     static void setDefaultBufferSize(const unsigned int size) { s_defaultBufSize = size; }
 
 public slots:
     bool send(const QByteArray& msg);
 
 signals:
-    void messageReceived(const Pipe* pipe);
+    void messageReceived(const MsgPipe* pipe);
+
+private slots:
+    void checkQueue(void);
 
 private:
     bool allocBuffer(const Type type, const unsigned int size);
-    bool freeBuffer(void);
+    void freeBuffer(void);
 
     int m_msgID;
     Type m_type;
@@ -45,6 +49,7 @@ private:
     unsigned int m_memSize;
 
     static unsigned int s_defaultBufSize;
+    static QTimer s_timer;
 };
 
 #endif

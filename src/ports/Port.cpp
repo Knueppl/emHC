@@ -45,7 +45,7 @@ bool Port::init(void)
 {
     if (!m_multiplexer.works())
     {
-        io << "Port" << m_portName << ": Multiplexer " << m_multiplexer.name() << " arbeitet nicht richtig.\n";
+        io() << "Port" << m_portName << ": Multiplexer " << m_multiplexer.name() << " arbeitet nicht richtig.";
         return false;
     }
 
@@ -53,13 +53,13 @@ bool Port::init(void)
 
     if (!file.open(QIODevice::WriteOnly))
     {
-        io << "Port " << m_portName << ": Kann Datei \"" << file.fileName() << "\" nicht öffnen.\n";
+        io() << "Port " << m_portName << ": Kann Datei \"" << file.fileName() << "\" nicht öffnen.";
         return false;
     }
 
     if (file.write(QByteArray::number(m_portNumber)) == -1)
     {
-        io << "Port " << m_portName << ": Kann nicht in die Datei \"export\" schreiben.\n";
+        io() << "Port " << m_portName << ": Kann nicht in die Datei \"export\" schreiben.";
         file.close();
         return false;
     }
@@ -68,23 +68,23 @@ bool Port::init(void)
     QDir dir(s_path);
     if (!dir.exists(QByteArray("gpio").append(QByteArray::number(m_portNumber))))
     {
-        io << "Port " << m_portName << ": Fehler beim erstellt des Portes.\n";
+        io() << "Port " << m_portName << ": Fehler beim erstellt des Portes.";
         return false;
     }
 
     if (!m_directionFile.open(QIODevice::ReadWrite))
     {
-        io << "Port " << m_portName << ": Kann Datei" << m_directionFile.fileName() << "nicht öffnen.\n";
+        io() << "Port " << m_portName << ": Kann Datei" << m_directionFile.fileName() << "nicht öffnen.";
         return false;
     }
 
     if (!m_valueFile.open(QIODevice::ReadOnly))
     {
-        io << "Port" << m_portName << ": Kann Datei" << m_valueFile.fileName() << "nicht öffnen.\n";
+        io() << "Port" << m_portName << ": Kann Datei" << m_valueFile.fileName() << "nicht öffnen.";
         return false;
     }
 
-    io << "Port " << m_portName << ": Erfolgreich eingerichtet.\n";
+    io() << "Port " << m_portName << ": Erfolgreich eingerichtet.";
     this->connect(&s_timer, SIGNAL(timeout()), this, SLOT(tick()));
     return true;
 }
@@ -100,19 +100,19 @@ Port::~Port(void)
 
     if (!file.open(QIODevice::WriteOnly))
     {
-        io << "Port " << m_portName << ": Kann Datei \"unexport\" nicht öffnen.\n";
+        io() << "Port " << m_portName << ": Kann Datei \"unexport\" nicht öffnen.";
         return;
     }
 
     if (file.write(QByteArray::number(m_portNumber)) == -1)
     {
-        io << "Port " << m_portName << ": Fehler beim schliessen des Ports " << m_portName << ".\n";
+        io() << "Port " << m_portName << ": Fehler beim schliessen des Ports " << m_portName << ".";
         file.close();
         return;
     }
 
     file.close();
-    io << "Port " << m_portName << ": geschlossen.\n";
+    io() << "Port " << m_portName << ": geschlossen.";
 }
 
 int Port::getFlagsFromNode(const QDomNode& node)
@@ -243,7 +243,7 @@ void Port::tick(void)
     /* if port dosen't work return from function */
     if (!this->works())
     {
-        io << "Port " << m_portName << ": ist nicht funktionsfähig. " << __PRETTY_FUNCTION__ << " wird aus dem Timer ausgetragen.\n";
+        io() << "Port " << m_portName << ": ist nicht funktionsfähig. " << __PRETTY_FUNCTION__ << " wird aus dem Timer ausgetragen.";
         this->disconnect(&s_timer, SIGNAL(timeout()), this, SLOT(tick()));
         return;
     }
@@ -332,7 +332,7 @@ void Port::setValue(const bool value)
     {
         if (m_directionFile.write("high") == -1)
         {
-            io << "Port " << m_portName << ": Fehler beim schreiben in die Datei " << m_directionFile.fileName() << ".\n";
+            io() << "Port " << m_portName << ": Fehler beim schreiben in die Datei " << m_directionFile.fileName() << ".";
             return;
         }
     }
@@ -340,7 +340,7 @@ void Port::setValue(const bool value)
     {
         if (m_directionFile.write("low") == -1)
         {
-            io << "Port " << m_portName << ": Fehler beim schreiben in die Datei " << m_directionFile.fileName() << ".\n";
+            io() << "Port " << m_portName << ": Fehler beim schreiben in die Datei " << m_directionFile.fileName() << ".";
             return;
         }
     }

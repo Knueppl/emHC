@@ -42,7 +42,7 @@ void AlertHandler::startAlertRoutine(void)
         return;
 
     m_calling = m_phones.begin();
-    io << "AlertHandler: try calling " << *m_calling << "\n";
+    io() << "AlertHandler: try calling " << *m_calling;
     m_modem->call(*m_calling, 30000);
 }
 
@@ -50,21 +50,21 @@ void AlertHandler::finishedCall(const Modem::State state)
 {
     if (state == Modem::Close)
     {
-        io << "AlertHandler: Modem closed. Try to reconfigure modem.\n";
+        io() << "AlertHandler: Modem closed. Try to reconfigure modem.";
         m_modem->reconfigure();
         this->startAlertRoutine();
     }
 
     if (state == Modem::CallRejected)
     {
-        io << "AlertHandler: call rejeceted from " << *m_calling << "\n";
+        io() << "AlertHandler: call rejeceted from " << *m_calling;
         return;
     }
 
     if (++m_calling >= m_phones.end())
         m_calling = m_phones.begin();
 
-    io << "AlertHandler: try calling " << *m_calling << "\n";
+    io() << "AlertHandler: try calling " << *m_calling;
     m_modem->call(*m_calling, 30000);
 }
 
@@ -87,7 +87,7 @@ void AlertHandler::addPhoneNumber(const QDomNode& node)
         if (tag.tagName() == "number")
         {
             m_phones.push_back(tag.text().toUtf8());
-            io << "AlertHandler: add phone number " << tag.text() <<"\n";
+            io() << "AlertHandler: add phone number " << tag.text();
         }
     }
 }

@@ -7,126 +7,25 @@ const int MAX_LOG_SIZE = 4096;
 }
 
 #include <QDebug>
-#include <iostream>
-#include <string>
-
+#include <QString>
 
 IOHandler io;
 
 
-IOHandler::IOHandler(QObject* parent)
-    : QThread(parent)
+IOHandler::IOHandler(const QByteArray& logFile, QObject* parent)
+    : QObject(parent),
+      m_log(logFile)
 {
-    std::cout  << HELLO_MESSAGES;
-}
-
-void IOHandler::run(void)
-{
-    while (1)
+    if (!m_log.open(QIODevice::WriteOnly))
     {
-        std::cout  << MENU_MESSAGES;
-        std::string in;
-        std::cin >> in;
-
-        if (in == SHOW_LOG)
-        {
-            m_mutex.lock();
-            qDebug() << "Logeinträge:";
-            qDebug() << "---------------------------------------------------------";
-            qDebug() << m_log;
-            m_mutex.unlock();
-        }
-        else if (in == SHOW_TEMP)
-        {
-
-        }
-        else if (in == CLOSE)
-        {
-            return;
-        }
+        if (!m_log.open(stdout, QIODevice::WriteOnly))
+            throw "IOHandler: can't open log file and stdout. I don't know what i have to do.";
     }
+
+    m_out.setDevice(&m_log);
 }
 
-IOHandler& IOHandler::operator<<(const QString& string)
+IOHandler::~IOHandler(void)
 {
-    if (m_log.size() >= MAX_LOG_SIZE)
-        return *this;
-
-    m_mutex.lock();
-    m_log.append(string);
-    m_mutex.unlock();
-
-    return *this;
-}
-
-IOHandler& IOHandler::operator<<(const QStringRef& string)
-{
-    if (m_log.size() >= MAX_LOG_SIZE)
-        return *this;
-
-    m_mutex.lock();
-    m_log.append(string);
-    m_mutex.unlock();
-
-    return *this;
-}
-
-IOHandler& IOHandler::operator<<(const QByteArray& string)
-{
-    if (m_log.size() >= MAX_LOG_SIZE)
-        return *this;
-
-    m_mutex.lock();
-    m_log.append(string);
-    m_mutex.unlock();
-
-    return *this;
-}
-
-IOHandler& IOHandler::operator<<(const char* string)
-{
-    if (m_log.size() >= MAX_LOG_SIZE)
-        return *this;
-
-    m_mutex.lock();
-    m_log.append(string);
-    m_mutex.unlock();
-
-    return *this;
-}
-
-IOHandler& IOHandler::operator<<(const unsigned int number)
-{
-    if (m_log.size() >= MAX_LOG_SIZE)
-        return *this;
-
-    m_mutex.lock();
-    m_log.append(QString::number(number));
-    m_mutex.unlock();
-
-    return *this;
-}
-
-IOHandler& IOHandler::operator<<(const int number)
-{
-    if (m_log.size() >= MAX_LOG_SIZE)
-        return *this;
-
-    m_mutex.lock();
-    m_log.append(QString::number(number));
-    m_mutex.unlock();
-
-    return *this;
-}
-
-IOHandler& IOHandler::operator<<(const float number)
-{
-    if (m_log.size() >= MAX_LOG_SIZE)
-        return *this;
-
-    m_mutex.lock();
-    m_log.append(QString::number(number));
-    m_mutex.unlock();
-
-    return *this;
+    m_log.close();
 }

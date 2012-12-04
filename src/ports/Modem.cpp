@@ -65,7 +65,7 @@ void Modem::configureDevice(const QByteArray& device)
     {
         m_device = 0;
         m_state = Close;
-        io << "Modem: can't open device \"" << device << "\"\n";
+        io() << "Modem: can't open device \"" << device << "\"";
         return;
     }
 
@@ -97,7 +97,7 @@ void Modem::configureDevice(const QByteArray& device)
     m_deviceName = device;
     m_state = Open;
 
-    io << "Modem: device \"" << device << "\" configured.\n";
+    io() << "Modem: device \"" << device << "\" configured.";
     this->connect(&m_timer, SIGNAL(timeout()), this, SLOT(readFromDevice()));
 }
 
@@ -128,7 +128,7 @@ void Modem::closeDevice(void)
 {
     m_timer.stop();
     this->disconnect(&m_timer, SIGNAL(timeout()), this, SLOT(readFromDevice()));
-    io << "Modem: close device \"" << m_deviceName << "\".\n";
+    io() << "Modem: close device \"" << m_deviceName << "\".";
     ::close(m_device);
     m_device = 0;
     m_buffer.clear();
@@ -146,10 +146,7 @@ void Modem::clearDeviceBuffer(void)
 void Modem::readFromDevice(void)
 {
     if (m_state == Close)
-    {
-        qDebug() << __PRETTY_FUNCTION__ << "device closed";
         return;
-    }
 
     const unsigned int SIZE = 1024;
     char data[SIZE];
@@ -170,7 +167,7 @@ void Modem::readFromDevice(void)
 
     if (m_buffer.contains(MSG_OK))
     {
-        io << "Modem: MSG OK\n";
+        io() << "Modem: MSG OK.";
         m_timer.stop();
         m_state = Open;
         m_buffer.clear();
@@ -180,7 +177,7 @@ void Modem::readFromDevice(void)
     }
     else if (m_buffer.contains(MSG_NO_CARRIER))
     {
-        io << "Modem: no carrier\n";
+        io() << "Modem: no carrier.";
         m_timer.stop();
         m_state = NoCarrier;
         m_buffer.clear();
@@ -190,7 +187,7 @@ void Modem::readFromDevice(void)
     }
     else if (m_buffer.contains(MSG_REJECTED))
     {
-        io << "Modem: call rejected\n";
+        io() << "Modem: call rejected.";
         m_timer.stop();
         m_state = CallRejected;
         m_buffer.clear();
@@ -200,7 +197,7 @@ void Modem::readFromDevice(void)
     }
     else if (static_cast<unsigned int>(m_timestamp.elapsed()) >= m_timeout + 5000)
     {
-        io << "Modem: timeout by calling\n";
+        io() << "Modem: timeout by calling.";
         this->closeDevice();
         emit this->stopped(m_state);
     }

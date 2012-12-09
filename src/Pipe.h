@@ -14,7 +14,8 @@ public:
 
     enum Type {
         None = 0,
-        Text = 1
+        Text,
+        Command
     };
 
     explicit Pipe(const QByteArray& keyFile, const unsigned int memSize = s_defaultMemSize, QObject* parent = 0);

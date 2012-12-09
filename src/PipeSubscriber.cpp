@@ -28,6 +28,10 @@ void PipeSubscriber::checkQueue(void)
         m_type = Text;
         break;
 
+    case Command:
+        m_type = Command;
+        break;
+
     default:
         m_type = None;
         return;
@@ -42,4 +46,12 @@ QByteArray PipeSubscriber::text(void) const
         return QByteArray();
 
     return QByteArray(static_cast<char*>(m_data) + sizeof(long));
+}
+
+int PipeSubscriber::command(void) const
+{
+    if (!m_data || m_type != Command)
+        return -1;
+
+    return *reinterpret_cast<int*>(static_cast<char*>(m_data) + sizeof(long));
 }

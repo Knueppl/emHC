@@ -13,6 +13,9 @@ public:
     bool isText(void) const { return m_type == Text; }
     QByteArray text(void) const;
 
+    bool isCommand(void) const { return m_type == Command; }
+    int command(void) const;
+
 signals:
     void messageReceived(const PipeSubscriber* pipe);
 

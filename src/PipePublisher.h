@@ -13,6 +13,7 @@ public:
 
 public slots:
     bool send(const QByteArray& msg);
+    bool send(const int command);
 };
 
 #endif

@@ -30,6 +30,7 @@
 #include <QByteArray>
 #include <QFile>
 #include <QTimer>
+#include <QTextStream>
 
 class QDomNode;
 
@@ -198,6 +199,12 @@ private:
 
     //! get holdtime for negative edge from xml node
     unsigned int getHoldTimeLowFromNode(const QDomNode& node);
+
+    //! friend method to print state of port in a cstring
+    friend QByteArray& operator<<(QByteArray& cstring, const Port& port);
+
+    //! friend method to print value of port in textstream
+    friend QTextStream& operator<<(QTextStream& stream, const Port& port);
 
     //! port number
     unsigned int m_portNumber;

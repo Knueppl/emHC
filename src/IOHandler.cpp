@@ -9,7 +9,7 @@ const int MAX_LOG_SIZE = 4096;
 #include <QDebug>
 #include <QString>
 
-IOHandler io;
+IOHandler io("/var/dryingC/default.log");
 
 
 IOHandler::IOHandler(const QByteArray& logFile, QObject* parent)

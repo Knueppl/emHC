@@ -1,7 +1,7 @@
 #ifndef __IO_HANDLER__
 #define __IO_HANDLER__
 
-#include "MsgPipe.h"
+#include "Pipe.h"
 
 #include <QObject>
 #include <QFile>

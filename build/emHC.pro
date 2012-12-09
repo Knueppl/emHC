@@ -2,14 +2,18 @@ TEMPLATE = lib
 VERSION = 0.0.2
 
 HEADERS = ../src/IOHandler.h \
-          ../src/MsgPipe.h \
+          ../src/Pipe.h \
+          ../src/PipePublisher.h \
+          ../src/PipeSubscriber.h \
           ../src/ports/Modem.h \
           ../src/alert/AlertHandler.h \
           ../src/ports/PortFactory.h \
           ../src/ports/Port.h \
           ../src/ports/PortMultiplexer.h
 
-SOURCES = ../src/MsgPipe.cpp \
+SOURCES = ../src/Pipe.cpp \
+          ../src/PipePublisher.cpp \
+          ../src/PipeSubscriber.cpp \
           ../src/IOHandler.cpp \
           ../src/ports/Modem.cpp \
           ../src/alert/AlertHandler.cpp \

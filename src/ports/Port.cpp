@@ -345,3 +345,41 @@ void Port::setValue(const bool value)
         }
     }
 }
+
+QByteArray& operator<<(QByteArray& cstring, const Port& port)
+{
+    QTextStream cstr(cstring);
+
+    cstr << "Port " << port.m_portName              << "\n";
+    cstr << "------------------------------\n";
+    cstr << "Pin         : " << port.m_pinName      << "\n";
+    cstr << "Number      : " << port.m_portNumber   << "\n";
+    cstr << "Holdtime hi : " << port.m_holdTimeHigh << "\n";
+    cstr << "Holdtime lo : " << port.m_holdTimeLow  << "\n";
+    cstr << "Value       : " << port.m_value        << "\n";
+    cstr << "------------------------------\n\n";
+
+    return cstring;
+}
+
+QTextStream& operator<<(QTextStream& stream, const Port& port)
+{
+    stream << "Port " << port.m_portName << "\n";
+    stream << "____________________________\n";
+    stream << "Value : " << port.m_value << "\n";
+
+    if (port.m_value)
+    {
+        if (port.m_tickCounter != port.m_holdTimeLow)
+            stream << "Pin : value changed since " << port.m_holdTimeLow - port.m_tickCounter << " ticks\n";
+    }
+    else
+    {
+        if (port.m_tickCounter != port.m_holdTimeHigh)
+            stream << "Pin : value changed since " << port.m_holdTimeHigh - port.m_tickCounter << " ticks\n";
+    }
+
+    stream << "____________________________\n\n";
+
+    return stream;
+}

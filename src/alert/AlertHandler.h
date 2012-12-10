@@ -29,6 +29,7 @@
 #include <QObject>
 #include <QByteArray>
 #include <QVector>
+#include <QTextStream>
 
 class QDomNode;
 
@@ -50,6 +51,12 @@ public:
 
     //! destructor
     ~AlertHandler(void);
+
+    //! friend function to print state to stream
+    friend QTextStream& operator<<(QTextStream& stream, const AlertHandler& handler);
+
+    //! friend function to print state in a cstring
+    friend QByteArray& operator<<(QByteArray& cstring, const AlertHandler& handler);
 
 public slots:
     //! starts to calling people

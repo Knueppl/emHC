@@ -66,6 +66,9 @@ public:
      */
     ~Modem(void);
 
+    //! returns current state
+    State state(void) const { return m_state; }
+
     //! calls a phone by number
     /*!
      * tries not longer than timeout

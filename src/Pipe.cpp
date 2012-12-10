@@ -44,5 +44,8 @@ Pipe::Pipe(const QByteArray& keyFile, const unsigned int memSize, QObject* paren
 Pipe::~Pipe(void)
 {
     delete static_cast<char*>(m_data);
+
+    if (m_id > 0)
+        msgctl(m_id, IPC_RMID, NULL);
 }
 

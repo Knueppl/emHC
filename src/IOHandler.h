@@ -22,6 +22,7 @@ public:
 
     IOHandler& operator()(void)
     {
+        m_out.flush();
         m_out << "\n[" << QTime::currentTime().toString() << "]";
         return *this;
     }
@@ -42,7 +43,6 @@ signals:
 private:
     QFile m_log;
     QTextStream m_out;
-//    MsgPipe m_pipe;
 };
 
 extern IOHandler io;

@@ -97,7 +97,7 @@ QTextStream& operator<<(QTextStream& stream, const AlertHandler& handler)
     if (handler.m_modem)
         stream << "Modem : " << handler.m_modem->state() << "\n";
 
-    for (int i = 0; handler.m_phones.size(); i++)
+    for (int i = 0; i < handler.m_phones.size(); i++)
         stream << "Phone " << i << ": " << handler.m_phones[i] << "\n";
 
     stream << "\n";

@@ -365,7 +365,7 @@ QByteArray& operator<<(QByteArray& cstring, const Port& port)
 QTextStream& operator<<(QTextStream& stream, const Port& port)
 {
     stream << "Port " << port.m_portName << "\n";
-    stream << "____________________________\n";
+    stream << "------------------------------\n";
     stream << "Value : " << port.m_value << "\n";
 
     if (port.m_value)
@@ -379,7 +379,7 @@ QTextStream& operator<<(QTextStream& stream, const Port& port)
             stream << "Pin : value changed since " << port.m_holdTimeHigh - port.m_tickCounter << " ticks\n";
     }
 
-    stream << "____________________________\n\n";
+    stream << "------------------------------\n\n";
 
     return stream;
 }

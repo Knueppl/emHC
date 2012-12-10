@@ -107,7 +107,7 @@ QTextStream& operator<<(QTextStream& stream, const AlertHandler& handler)
 
 QByteArray& operator<<(QByteArray& cstring, const AlertHandler& handler)
 {
-    QTextStream stream(cstring);
+    QTextStream stream(&cstring);
     stream << handler;
     return cstring;
 }

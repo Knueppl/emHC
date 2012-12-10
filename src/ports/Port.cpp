@@ -348,7 +348,7 @@ void Port::setValue(const bool value)
 
 QByteArray& operator<<(QByteArray& cstring, const Port& port)
 {
-    QTextStream cstr(cstring);
+    QTextStream cstr(&cstring);
 
     cstr << "Port " << port.m_portName              << "\n";
     cstr << "------------------------------\n";

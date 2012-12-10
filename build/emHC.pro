@@ -1,5 +1,5 @@
 TEMPLATE = lib
-VERSION = 0.0.2
+VERSION = 0.0.3
 
 HEADERS = ../src/IOHandler.h \
           ../src/Pipe.h \

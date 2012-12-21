@@ -20,13 +20,15 @@ public:
             None,
             RealTimeOn,
             RealTimeOff,
-            SendTemperature
+            SendTemperature,
+            Data
         };
 
         Command(const Type type = None) : m_type(type) { }
 
         bool isNull(void) const { return m_type == None; }
         Type type(void) const { return m_type; }
+        const QByteArray& data(void) const { return m_data; }
 
         static QByteArray typeToString(const Type type);
         static Type stringToType(const QStringRef& string);
@@ -34,9 +36,12 @@ public:
     private:
 
         Type m_type;
+        QByteArray m_data;
     };
 
     RemoteClient(QObject* parent = 0);
+
+    void sendData(const QByteArray& data);
 
 signals:
     void command(RemoteClient::Command command);

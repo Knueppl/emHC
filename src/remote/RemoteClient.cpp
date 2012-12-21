@@ -38,6 +38,17 @@ void RemoteClient::receive(void)
 
         buffer.clear();
     }
+    else if (tag == "data" && tagClose == "/data")
+    {
+
+    }
+}
+
+void RemoteClient::sendData(const QByteArray& data)
+{
+    QByteArray out("<data>");
+    out.append(data).append("</data>\n");
+    this->write(out);
 }
 
 QByteArray RemoteClient::Command::typeToString(const Type type)
@@ -53,6 +64,9 @@ QByteArray RemoteClient::Command::typeToString(const Type type)
     case SendTemperature:
         return QByteArray("SendTemperature");
 
+    case Data:
+        return QByteArray("Data");
+
     default:
         return QByteArray("None");
     }
@@ -66,6 +80,8 @@ RemoteClient::Command::Type RemoteClient::Command::stringToType(const QStringRef
         return RealTimeOff;
     else if (string == "SendTemperature")
         return SendTemperature;
+    else if (string == "Data")
+        return Data;
     else
         return None;
 }

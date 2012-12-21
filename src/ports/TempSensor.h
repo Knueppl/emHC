@@ -24,6 +24,17 @@ public:
     //! returns the name of the sensor
     const QByteArray& name(void) const { return m_name; }
 
+    //! return a formatted string containing all data of this sensor
+    QByteArray dataString(void) const
+    {
+        QByteArray string("TempSensor(");
+        QTextStream stream(&string);
+
+        stream << m_name << ")" << m_temperature << ";";
+        stream.flush();
+        return string;
+    }
+
     //! prints the name and temperature of the sensor in a stream
     friend QTextStream& operator<<(QTextStream& stream, const TempSensor& sensor)
     {

@@ -383,3 +383,12 @@ QTextStream& operator<<(QTextStream& stream, const Port& port)
 
     return stream;
 }
+
+void Port::setValueFromString(const QByteArray& cstring)
+{
+    /* return if any thing didn't init correctly or port is from type input */
+    if (!this->works() || m_multiplexer.flags() & PortMultiplexer::Input)
+        return;
+
+    this->setValue(this->stringToValue(cstring));
+}

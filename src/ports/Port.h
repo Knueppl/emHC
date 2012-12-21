@@ -86,7 +86,7 @@ public:
     unsigned int portNumber(void) const   { return m_portNumber; }
 
     //! get name of port
-    const QByteArray portName(void) const { return m_portName; }
+    const QByteArray& portName(void) const { return m_portName; }
 
     //! get current value
     bool value(void) const                { return m_value; }
@@ -136,6 +136,19 @@ public:
 
     //! get holdtime for negative edge
     unsigned int holdTimeLow(void) const  { return m_holdTimeLow; }
+
+    //! set value from a cstring
+    /*!
+     * the must have the format "value=1" or "value=0". When port became a input this method hasn't any effect.
+     * \param cstring string that holds the new value
+     */
+    void setValueFromString(const QByteArray& cstring);
+
+    //! converts value to a string
+    static QByteArray valueToString(const bool value) { return value ? QByteArray("value=1") : QByteArray("value=0"); }
+
+    //! converts string to a boolean
+    static bool stringToValue(const QByteArray& cstring) { return cstring == "value=1" ? true : false ; }
 
     //! set the path to the gpio directory
     static void setPath(const QByteArray& path) { s_path = path; }

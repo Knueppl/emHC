@@ -27,10 +27,10 @@ public:
     //! return a formatted string containing all data of this sensor
     QByteArray dataString(void) const
     {
-        QByteArray string("TempSensor(");
+        QByteArray string;
         QTextStream stream(&string);
 
-        stream << m_name << ")" << m_temperature << ";";
+        stream << "TempSensor(" << m_name << ")" << m_temperature << ";";
         stream.flush();
         return string;
     }

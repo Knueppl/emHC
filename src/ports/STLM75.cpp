@@ -10,7 +10,7 @@
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 
-#define MSG(x) (io() << "STLM75 (" << m_name << ") : " << x << ".\n")
+#define MSG(x) (io() << "STLM75 (" << m_name << ") : " << x << ".")
 
 STLM75::STLM75(const unsigned char busID, const unsigned char busAddress, const QByteArray& name)
 : TempSensor(name),
@@ -97,7 +97,7 @@ bool STLM75::open(const unsigned char busID, const unsigned char busAddress)
     return true;
 }
 
-float STLM75::readSensor(void) const
+bool STLM75::grab(void)
 {
     const int SIZE = 1;
     char buffer[SIZE] = { 0x00 };
@@ -105,18 +105,20 @@ float STLM75::readSensor(void) const
     if (::write(m_device, buffer, SIZE) != SIZE)
     {
         MSG("can't write to device");
-        return -100.0;
+        return false;
     }
 
     if (::read(m_device, buffer, SIZE) != SIZE)
     {
         MSG("can't read from device");
-        return -100.0;
+        return false;
     }
 
-    return static_cast<float>(*buffer);
+    m_temperature = static_cast<float>(*buffer);
+    return true;
 }
 
+/*
 QByteArray STLM75::data(void) const
 {
     QByteArray string("STLM75(");
@@ -128,3 +130,4 @@ QByteArray STLM75::data(void) const
 
     return string;
 }
+*/

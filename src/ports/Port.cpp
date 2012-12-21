@@ -379,7 +379,7 @@ QTextStream& operator<<(QTextStream& stream, const Port& port)
             stream << "Pin : value changed since " << port.m_holdTimeHigh - port.m_tickCounter << " ticks\n";
     }
 
-    stream << "------------------------------\n\n";
+    stream << "------------------------------\n";
 
     return stream;
 }

@@ -74,7 +74,7 @@ PortMultiplexer::Mode PortMultiplexer::getModeOfPort(const QByteArray& pinName)
     QProcess process;
     process.start("/bin/sh", QStringList() << "-c" << QString("grep ").append(pinName).append(" ").append(s_path).append('*'));
 
-    if(!process.waitForFinished(10000) || process.exitCode())
+    if(!process.waitForFinished(10000))// || process.exitCode())
     {
         io() << __PRETTY_FUNCTION__ << " Fehler beim ausführen von grep.";
         return None;
@@ -90,6 +90,7 @@ PortMultiplexer::Mode PortMultiplexer::getModeOfPort(const QByteArray& pinName)
         return None;
     }
 
+    io() << "PortMultiplexer " << pinName << " set to mode " << position;
     return modes[position];
 }
 
@@ -116,7 +117,7 @@ QByteArray PortMultiplexer::getMultiplexerName(const QByteArray& pinName)
     QProcess process;
     process.start("/bin/sh", QStringList() << "-c" << QString("grep ").append(pinName).append(" ").append(s_path).append('*'));
 
-    if(!process.waitForFinished(10000) || process.exitCode())
+    if(!process.waitForFinished(10000))// || process.exitCode())
     {
         io() << __PRETTY_FUNCTION__ << " Fehler beim ausführen von grep.";
         return QByteArray();

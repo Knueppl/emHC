@@ -126,13 +126,16 @@ QByteArray PortMultiplexer::getMultiplexerName(const QByteArray& pinName)
 
     for (int line = 0; line < lines.size(); line++)
     {
-        /* check if exists ':' in line */
-        if (!lines[line].contains(":"))
+        /* check if exists ':' in line or it's a massage from grep */
+        if (!lines[line].contains(":") || lines[line].contains("grep:"))
             continue;
 
         /* get complete path of multiplexer file and remove s_path from it */
         QStringList list = lines[line].split(":");
-        return QByteArray(list[0].remove(' ').toUtf8().replace(s_path, ""));
+        QByteArray muxName(list[0].remove(' ').toUtf8().replace(s_path, ""));
+        io() << "PortMultiplexer: found mux " << muxName << " for pin " << pinName;
+
+        return muxName;
     }
 
     return QByteArray();

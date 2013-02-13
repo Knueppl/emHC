@@ -58,14 +58,14 @@ void AlertHandler::tick(void)
     if (!m_alertPort)
         return;
 
-m_alertPort->setValue(true);
-//    m_alertPort->setValue(!m_alertPort->value());
+//m_alertPort->setValue(true);
+    m_alertPort->setValue(!m_alertPort->value());
 }
 
 void AlertHandler::startAlertRoutine(void)
 {
-qDebug() << __PRETTY_FUNCTION__;
-m_timer.start(500);
+    m_timer.start(500);
+
     if (!m_modem || !m_phones.size())
         return;
 

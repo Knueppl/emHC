@@ -328,7 +328,7 @@ void Port::setValue(const bool value)
     if (!this->works() || m_multiplexer.flags() & PortMultiplexer::Input)
         return;
 
-m_value = value;
+    m_value = value;
 
     if (value)
     {
@@ -346,6 +346,8 @@ m_value = value;
             return;
         }
     }
+
+    m_directionFile.flush();
 }
 
 QByteArray& operator<<(QByteArray& cstring, const Port& port)

@@ -8,7 +8,8 @@ AlertHandler::AlertHandler(const QDomNode& node, QObject* parent)
     : QObject(parent),
       m_modem(0),
       m_resetPort(0),
-      m_alertPort(0)
+      m_alertPort(0),
+      m_active(false)
 {
     const QDomElement root(node.toElement());
 
@@ -43,7 +44,11 @@ AlertHandler::~AlertHandler(void)
 
 void AlertHandler::setResetPort(Port* port)
 {
+    if (m_resetPort)
+        this->disconnect(m_resetPort, SIGNAL(valueChanged(const bool)), this, SLOT(resetAlertRoutine(const bool)));
 
+    m_resetPort = port;
+    this->connect(m_resetPort, SIGNAL(valueChanged(const bool)), this, SLOT(resetAlertRoutine(const bool)));
 }
 
 void AlertHandler::setAlertPort(Port* port)
@@ -58,12 +63,12 @@ void AlertHandler::tick(void)
     if (!m_alertPort)
         return;
 
-//m_alertPort->setValue(true);
     m_alertPort->setValue(!m_alertPort->value());
 }
 
 void AlertHandler::startAlertRoutine(void)
 {
+    m_active = true;
     m_timer.start(500);
 
     if (!m_modem || !m_phones.size())
@@ -74,8 +79,25 @@ void AlertHandler::startAlertRoutine(void)
     m_modem->call(*m_calling, 30000);
 }
 
+void AlertHandler::resetAlertRoutine(const bool reset)
+{
+    if (reset)
+        return;
+
+    m_timer.stop();
+
+    if (m_alertPort)
+        m_alertPort->setValue(false);
+
+    m_active = false;
+    io() << "AlertHandler: alert reseted by reset button";
+}
+
 void AlertHandler::finishedCall(const Modem::State state)
 {
+    if (!m_active)
+        return;
+
     if (state == Modem::Close)
     {
         io() << "AlertHandler: Modem closed. Try to reconfigure modem.";
@@ -84,10 +106,7 @@ void AlertHandler::finishedCall(const Modem::State state)
     }
 
     if (state == Modem::CallRejected)
-    {
         io() << "AlertHandler: call rejeceted from " << *m_calling;
-        return;
-    }
 
     if (++m_calling >= m_phones.end())
         m_calling = m_phones.begin();

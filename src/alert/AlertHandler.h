@@ -49,15 +49,21 @@ public:
      * \param node xml node with necessary parameters
      * \param parent QObject parent
      */
-    AlertHandler(const QDomNode& node, QObject* parent = 0);
+    explicit AlertHandler(const QDomNode& node, QObject* parent = 0);
 
     //! destructor
     ~AlertHandler(void);
 
     //! set Port for reset alarm
+    /*!
+     * \param port must be alive all the time. The destructor dosen't delete port.
+     */
     void setResetPort(Port* port);
 
     //! set Port for sign alarm state
+    /*!
+     * \param port must be alive all the time. The destructor dosen't delete port.
+     */
     void setAlertPort(Port* port);
 
     //! friend function to print state to stream
@@ -84,6 +90,9 @@ private slots:
     //! tick function for alert signal blinking
     void tick(void);
 
+    //! reset alert routine
+    void resetAlertRoutine(const bool reset);
+
 private:
     //! add a phone number to internal vector
     /*!
@@ -98,6 +107,7 @@ private:
     Port* m_resetPort;
     Port* m_alertPort;
     QTimer m_timer;
+    bool m_active;
 };
 
 #endif

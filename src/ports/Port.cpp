@@ -328,6 +328,8 @@ void Port::setValue(const bool value)
     if (!this->works() || m_multiplexer.flags() & PortMultiplexer::Input)
         return;
 
+m_value = value;
+
     if (value)
     {
         if (m_directionFile.write("high") == -1)

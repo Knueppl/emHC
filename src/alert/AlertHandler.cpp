@@ -2,6 +2,7 @@
 #include "IOHandler.h"
 
 #include <QDomNode>
+#include <QDebug>
 
 AlertHandler::AlertHandler(const QDomNode& node, QObject* parent)
     : QObject(parent),
@@ -57,15 +58,17 @@ void AlertHandler::tick(void)
     if (!m_alertPort)
         return;
 
-    m_alertPort->setValue(!m_alertPort->value());
+m_alertPort->setValue(true);
+//    m_alertPort->setValue(!m_alertPort->value());
 }
 
 void AlertHandler::startAlertRoutine(void)
 {
+qDebug() << __PRETTY_FUNCTION__;
+m_timer.start(500);
     if (!m_modem || !m_phones.size())
         return;
 
-    m_timer.start(500);
     m_calling = m_phones.begin();
     io() << "AlertHandler: try calling " << *m_calling;
     m_modem->call(*m_calling, 30000);

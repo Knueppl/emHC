@@ -25,11 +25,13 @@
 #define __ALERT_HANDLER__
 
 #include "Modem.h"
+#include "Port.h"
 
 #include <QObject>
 #include <QByteArray>
 #include <QVector>
 #include <QTextStream>
+#include <QTimer>
 
 class QDomNode;
 
@@ -52,6 +54,12 @@ public:
     //! destructor
     ~AlertHandler(void);
 
+    //! set Port for reset alarm
+    void setResetPort(Port* port);
+
+    //! set Port for sign alarm state
+    void setAlertPort(Port* port);
+
     //! friend function to print state to stream
     friend QTextStream& operator<<(QTextStream& stream, const AlertHandler& handler);
 
@@ -73,6 +81,9 @@ private slots:
      */
     void finishedCall(const Modem::State state);
 
+    //! tick function for alert signal blinking
+    void tick(void);
+
 private:
     //! add a phone number to internal vector
     /*!
@@ -84,6 +95,9 @@ private:
     Modem*                        m_modem;
     QVector<QByteArray>           m_phones;
     QVector<QByteArray>::iterator m_calling;
+    Port* m_resetPort;
+    Port* m_alertPort;
+    QTimer m_timer;
 };
 
 #endif

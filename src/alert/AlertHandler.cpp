@@ -5,7 +5,9 @@
 
 AlertHandler::AlertHandler(const QDomNode& node, QObject* parent)
     : QObject(parent),
-      m_modem(0)
+      m_modem(0),
+      m_resetPort(0),
+      m_alertPort(0)
 {
     const QDomElement root(node.toElement());
 
@@ -29,6 +31,8 @@ AlertHandler::AlertHandler(const QDomNode& node, QObject* parent)
             this->connect(m_modem, SIGNAL(stopped(const Modem::State)), this, SLOT(finishedCall(const Modem::State)));
         }
     }
+
+    this->connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
 }
 
 AlertHandler::~AlertHandler(void)
@@ -36,11 +40,32 @@ AlertHandler::~AlertHandler(void)
     delete m_modem;
 }
 
+void AlertHandler::setResetPort(Port* port)
+{
+
+}
+
+void AlertHandler::setAlertPort(Port* port)
+{
+    m_alertPort = port;
+    port->setValue(false);
+}
+
+void AlertHandler::tick(void)
+{
+    /* invert state of alert port, if exists */
+    if (!m_alertPort)
+        return;
+
+    m_alertPort->setValue(!m_alertPort->value());
+}
+
 void AlertHandler::startAlertRoutine(void)
 {
     if (!m_modem || !m_phones.size())
         return;
 
+    m_timer.start(500);
     m_calling = m_phones.begin();
     io() << "AlertHandler: try calling " << *m_calling;
     m_modem->call(*m_calling, 30000);

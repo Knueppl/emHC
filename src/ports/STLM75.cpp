@@ -60,6 +60,14 @@ STLM75::STLM75(const QDomNode& node)
         {
             m_busAddress = static_cast<unsigned char>(tag.text().toUInt(0, 16));
         }
+        else if (tag.tagName() == "max")
+        {
+            m_max = tag.text().toFloat();
+        }
+        else if (tag.tagName() == "min")
+        {
+            m_min = tag.text().toFloat();
+        }
     }
 
     MSG("on bus " << static_cast<unsigned int>(m_busID) << " address " << static_cast<unsigned int>(m_busAddress));
@@ -115,6 +123,20 @@ bool STLM75::grab(void)
     }
 
     m_temperature = static_cast<float>(*buffer);
+
+    if (m_temperature >= m_max || m_temperature <= m_min)
+    {
+        if (!m_alert)
+        {
+            m_alert = true;
+            emit this->alert();
+        }
+    }
+    else
+    {
+        m_alert = false;
+    }
+
     return true;
 }
 

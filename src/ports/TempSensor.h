@@ -5,11 +5,13 @@
 #include <QTextStream>
 
 //! base class TempSensor for all temperature sensors
-class TempSensor
+class TempSensor : public QObject
 {
+    Q_OBJECT
+
 public:
     //! constructor
-    explicit TempSensor(const QByteArray& name = QByteArray()) : m_name(name), m_temperature(-100.0) { }
+    explicit TempSensor(const QByteArray& name = QByteArray()) : m_name(name), m_temperature(-100.0), m_max(999.9), m_min(-100.0), m_alert(false) { }
     //! virtual destructor
     virtual ~TempSensor(void) { }
 
@@ -42,12 +44,21 @@ public:
         return stream;
     }
 
+signals:
+    void alert(void);
+
 protected:
 
     //! sensor name
     QByteArray m_name;
     //! temperature value
     float m_temperature;
+    //! max temperature
+    float m_max;
+    //! min temperature
+    float m_min;
+    //! alert state
+    bool m_alert;
 };
 
 //QTextStream& operator<<(QTextStream& stream, const TempSensor& sensor)
